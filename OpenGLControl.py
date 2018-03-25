@@ -18,6 +18,8 @@ class GLWidget(QtOpenGL.QGLWidget):
 		self.yRot = 0
 		self.zRot = 0
 		self.z_zoom = -30
+		self.xTran = 0
+		self.yTran = 0
 
 	def setXRotation(self, angle):
 		self.normalizeAngle(angle)
@@ -40,6 +42,11 @@ class GLWidget(QtOpenGL.QGLWidget):
 			self.zRotationChanged.emit(angle)
 			self.updateGL()
 
+	def setXYTranslate(self, dx, dy):
+		self.xTran += 0.05 * dx
+		self.yTran -= 0.05 * dy
+		self.updateGL()
+
 	def setZoom(self, zoom):
 		self.z_zoom = zoom
 		self.updateGL()
@@ -60,6 +67,7 @@ class GLWidget(QtOpenGL.QGLWidget):
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 		glPushMatrix()
 		glTranslate(0, 0, self.z_zoom)
+		glTranslate(self.xTran, self.yTran, 0)
 		glRotated(self.xRot / 16.0, 1.0, 0.0, 0.0)
 		glRotated(self.yRot / 16.0, 0.0, 1.0, 0.0)
 		glRotated(self.zRot / 16.0, 0.0, 0.0, 1.0)
@@ -106,8 +114,7 @@ class GLWidget(QtOpenGL.QGLWidget):
 		elif event.buttons() & QtCore.Qt.RightButton:
 			self.setZoom(self.z_zoom + 0.5*dy)
 		elif event.buttons() & QtCore.Qt.MidButton:
-			self.setXRotation(self.xRot + 8 * dy)
-			self.setZRotation(self.zRot + 8 * dx)
+			self.setXYTranslate(dx, dy)
 		self.lastPos = event.pos()
 
 	def xRotation(self):
