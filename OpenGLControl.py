@@ -11,7 +11,6 @@ class GLWidget(QtOpenGL.QGLWidget):
 
 	def __init__(self, parent=None):
 		super(GLWidget, self).__init__(parent)
-
 		self.gear1 = 0
 		self.gear2 = 0
 		self.gear3 = 0
@@ -22,7 +21,6 @@ class GLWidget(QtOpenGL.QGLWidget):
 
 	def setXRotation(self, angle):
 		self.normalizeAngle(angle)
-
 		if angle != self.xRot:
 			self.xRot = angle
 			self.xRotationChanged.emit(angle)
@@ -30,7 +28,6 @@ class GLWidget(QtOpenGL.QGLWidget):
 
 	def setYRotation(self, angle):
 		self.normalizeAngle(angle)
-
 		if angle != self.yRot:
 			self.yRot = angle
 			self.yRotationChanged.emit(angle)
@@ -38,7 +35,6 @@ class GLWidget(QtOpenGL.QGLWidget):
 
 	def setZRotation(self, angle):
 		self.normalizeAngle(angle)
-
 		if angle != self.zRot:
 			self.zRot = angle
 			self.zRotationChanged.emit(angle)
@@ -53,7 +49,6 @@ class GLWidget(QtOpenGL.QGLWidget):
 		reflectance1 = (0.8, 0.1, 0.0, 1.0)
 		reflectance2 = (0.0, 0.8, 0.2, 1.0)
 		reflectance3 = (0.2, 0.2, 1.0, 1.0)
-
 		glLightfv(GL_LIGHT0, GL_POSITION, lightPos)
 		glEnable(GL_LIGHTING)
 		glEnable(GL_LIGHT0)
@@ -63,7 +58,6 @@ class GLWidget(QtOpenGL.QGLWidget):
 
 	def paintGL(self):
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-
 		glPushMatrix()
 		glTranslate(0, 0, self.z_zoom)
 		glRotated(self.xRot / 16.0, 1.0, 0.0, 0.0)
@@ -71,7 +65,6 @@ class GLWidget(QtOpenGL.QGLWidget):
 		glRotated(self.zRot / 16.0, 0.0, 0.0, 1.0)
 		glRotated(+90.0, 1.0, 0.0, 0.0)
 		self.drawGrid()
-
 		glPopMatrix()
 
 	def resizeGL(self, width, height):
@@ -82,7 +75,6 @@ class GLWidget(QtOpenGL.QGLWidget):
 		glMatrixMode(GL_PROJECTION)
 		glLoadIdentity()
 		GLU.gluPerspective(35.0, width / float(height), 0.01, 2000.0)
-
 		glMatrixMode(GL_MODELVIEW)
 		glLoadIdentity()
 		glTranslated(0.0, 0.0, -40.0)
@@ -108,7 +100,6 @@ class GLWidget(QtOpenGL.QGLWidget):
 	def mouseMoveEvent(self, event):
 		dx = event.x() - self.lastPos.x()
 		dy = event.y() - self.lastPos.y()
-
 		if event.buttons() & QtCore.Qt.LeftButton:
 			self.setXRotation(self.xRot + 8 * dy)
 			self.setYRotation(self.yRot + 8 * dx)
@@ -117,7 +108,6 @@ class GLWidget(QtOpenGL.QGLWidget):
 		elif event.buttons() & QtCore.Qt.MidButton:
 			self.setXRotation(self.xRot + 8 * dy)
 			self.setZRotation(self.zRot + 8 * dx)
-
 		self.lastPos = event.pos()
 
 	def xRotation(self):
@@ -132,6 +122,5 @@ class GLWidget(QtOpenGL.QGLWidget):
 	def normalizeAngle(self, angle):
 		while (angle < 0):
 			angle += 360 * 16
-
 		while (angle > 360 * 16):
 			angle -= 360 * 16
