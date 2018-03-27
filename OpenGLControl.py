@@ -24,9 +24,9 @@ class GLWidget(QtOpenGL.QGLWidget):
 		#init stl files
 		self.model0 = STLFile.loader('STLFile/Link_0.STL')
 		self.model1 = STLFile.loader('STLFile/Link_1.STL')
-		# self.model2 = STLFile.loader('STLFile/Link_2.STL')
-		# self.model3 = STLFile.loader('STLFile/Link_3.STL')
-		# self.model4 = STLFile.loader('STLFile/Link_4.STL')
+		self.model2 = STLFile.loader('STLFile/Link_2.STL')
+		self.model3 = STLFile.loader('STLFile/Link_3.STL')
+		self.model4 = STLFile.loader('STLFile/Link_4.STL')
 		# self.model5 = STLFile.loader('STLFile/Link_5.STL')
 		# self.model6 = STLFile.loader('STLFile/Link_6.STL')
 
