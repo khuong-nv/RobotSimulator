@@ -12,6 +12,7 @@ class RobotSimulator(QMainWindow, QTabWidget):
 		file.addAction("New")
 		file.addAction("Save")
 		file.addAction("Quit")
+		file.addAction("Open")
 
 		# embeded OpenGL into Widget
 		glWidget = OpenGLControl.GLWidget(self)
