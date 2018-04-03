@@ -2,38 +2,56 @@ import sys
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 import OpenGLControl
-class dockdemo(QMainWindow):
-   def __init__(self, parent = None):
-	  super(dockdemo, self).__init__(parent)
-	  w = QWidget()
-	  layout = QHBoxLayout()
-	  bar = self.menuBar()
-	  file = bar.addMenu("File")
-	  file.addAction("New")
-	  file.addAction("save")
-	  file.addAction("quit")
-	  glWidget = OpenGLControl.GLWidget(self)
-	  self.setCentralWidget(glWidget)
+class RobotSimulator(QMainWindow, QTabWidget):
+   	def __init__(self, parent = None):
+	  	super(RobotSimulator, self).__init__(parent)
 		
-	  self.items = QDockWidget("Dockable", self)
-	  self.listWidget = QListWidget()
-	  self.listWidget.addItem("item1")
-	  self.listWidget.addItem("item2")
-	  self.listWidget.addItem("item3")
-		
-	  self.items.setWidget(self.listWidget)
-	  self.items.setFloating(False)
-	  self.setCentralWidget(glWidget)
-	  self.addDockWidget(Qt.RightDockWidgetArea, self.items)
-	  self.setLayout(layout)
-	  self.setWindowTitle("Robot Design")
+		# create menu
+		bar = self.menuBar()
+		file = bar.addMenu("File")
+		file.addAction("New")
+		file.addAction("save")
+		file.addAction("quit")
+
+		# embeded OpenGL into Widget
+		glWidget = OpenGLControl.GLWidget(self)
+		self.setCentralWidget(glWidget)
+
+		# Setup Dock Control
+		self.items = QDockWidget("Control", self)
+		win = QWidget()
+		l1 = QLabel("Name")
+		nm = QLineEdit()
+		l2 = QLabel("Address")
+   		add1 = QLineEdit()
+		add2 = QLineEdit()
+		fbox = QFormLayout()	
+		fbox.addRow(l1,nm)
+		vbox = QVBoxLayout()
+		vbox.addWidget(add1)
+		vbox.addWidget(add2)
+		fbox.addRow(l2,vbox)
+		hbox = QHBoxLayout()
+		r1 = QRadioButton("Male")
+		r2 = QRadioButton("Female")
+		hbox.addWidget(r1)
+		hbox.addWidget(r2)
+		hbox.addStretch()
+		fbox.addRow(QLabel("sex"),hbox)
+		fbox.addRow(QPushButton("Submit"),QPushButton("Cancel"))
+		win.setLayout(fbox)
+		self.items.setWidget(win)
+		self.items.setFloating(False)
+		self.addDockWidget(Qt.RightDockWidgetArea, self.items)
+
+		# Setup properties of program
+		self.setWindowTitle("Robot Design")
 		
 def main():
-   app = QApplication(sys.argv)
-   ex = dockdemo()
-   ex.setGeometry(100,100,1000,800)
-   ex.show()
-   sys.exit(app.exec_())
-	
+	app = QApplication(sys.argv)
+	ex = RobotSimulator()
+	ex.setGeometry(100,100,1000,800)
+	ex.show()
+	sys.exit(app.exec_())
 if __name__ == '__main__':
-   main()
+	main()
