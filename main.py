@@ -3,9 +3,9 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 import OpenGLControl
 class RobotSimulator(QMainWindow, QTabWidget):
-   	def __init__(self, parent = None):
-	  	super(RobotSimulator, self).__init__(parent)
-		
+	def __init__(self, parent = None):
+		super(RobotSimulator, self).__init__(parent)
+
 		# create menu
 		bar = self.menuBar()
 		file = bar.addMenu("File")
@@ -24,7 +24,7 @@ class RobotSimulator(QMainWindow, QTabWidget):
 		l1 = QLabel("Name")
 		nm = QLineEdit()
 		l2 = QLabel("Address")
-   		add1 = QLineEdit()
+		add1 = QLineEdit()
 		add2 = QLineEdit()
 		fbox = QFormLayout()	
 		fbox.addRow(l1,nm)

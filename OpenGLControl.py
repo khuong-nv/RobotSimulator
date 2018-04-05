@@ -2,7 +2,7 @@ from PyQt4 import QtCore, QtGui
 from PyQt4 import QtOpenGL
 from OpenGL import GLU
 from OpenGL.GL import *
-from numpy import array
+from numpy import array, arange
 import STLFile
 
 class GLWidget(QtOpenGL.QGLWidget):
@@ -123,7 +123,7 @@ class GLWidget(QtOpenGL.QGLWidget):
 		glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, color);
 		step = 50
 		num = 24
-		for i in xrange(-num, num+1):
+		for i in arange(-num, num+1):
 			glBegin(GL_LINES)
 			glVertex3f(i*step, -num * step, 0)
 			glVertex3f(i*step, num*step, 0)

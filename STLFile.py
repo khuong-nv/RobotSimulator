@@ -1,5 +1,6 @@
 from OpenGL.GL import *
 from OpenGL.GLU import *
+import struct
 
 #class for a 3d point
 class createpoint:
@@ -65,12 +66,11 @@ class loader:
         h=fp.read(80)
         type=h[0:5]
         fp.close()
-
-        if type=='solid':
-            print "reading stl file "+str(filename)
+        if type==b'solid':
+            print ("reading stl file "+str(filename))
             self.load_text_stl(filename)
         else:
-            print "reading binary stl file "+str(filename,)
+            print ("reading binary stl file "+str(filename))
             self.load_binary_stl(filename)
   
     #read text stl match keywords to grab the points to build the model
