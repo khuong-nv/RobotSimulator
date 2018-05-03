@@ -1,9 +1,10 @@
-from PyQt4 import QtCore, QtGui
-from PyQt4 import QtOpenGL
+from PyQt5 import QtCore, QtGui
+from PyQt5 import QtOpenGL
 from OpenGL import GLU
 from OpenGL.GL import *
 from numpy import array, arange
-import STLFile
+from STLFile import *
+from stl.ascii import *
 
 class GLWidget(QtOpenGL.QGLWidget):
 	xRotationChanged = QtCore.pyqtSignal(int)
@@ -12,6 +13,26 @@ class GLWidget(QtOpenGL.QGLWidget):
 
 	def __init__(self, parent=None):
 		super(GLWidget, self).__init__(parent)
+		self.q1 = 0
+		self.q2 = 0
+		self.q3 = 0
+		self.q4 = 0
+
+		self.d1 = 89.2
+		self.d2 = -135.7
+		self.d3 = 130.4
+		self.d4 = 0 
+
+		self.a1 = 0
+		self.a2 = 300
+		self.a3 = 383
+		self.a4 = 60.04
+
+		self.alpha1 = -90
+		self.alpha2 = 0
+		self.alpha3 = 0
+		self.alpha4 = 0
+
 		self.gear1 = 0
 		self.gear2 = 0
 		self.gear3 = 0
@@ -22,19 +43,18 @@ class GLWidget(QtOpenGL.QGLWidget):
 		self.xTran = 0
 		self.yTran = 0
 		#init stl files
-		self.model0 = STLFile.loader('STLFile/Link_0.STL')
-		self.model1 = STLFile.loader('STLFile/Link_1.STL')
-		# self.model2 = STLFile.loader('STLFile/Link_2.STL')
-		# self.model3 = STLFile.loader('STLFile/Link_3.STL')
-		# self.model4 = STLFile.loader('STLFile/Link_4.STL')
-		# self.model5 = STLFile.loader('STLFile/Link_5.STL')
-		# self.model6 = STLFile.loader('STLFile/Link_6.STL')
+		self.model0 = loader('STLFile/Link0.STL')
+		self.model1 = loader('STLFile/Link1.STL')
+		self.model2 = loader('STLFile/Link2.STL')
+		self.model3 = loader('STLFile/Link3.STL')
+		self.model4 = loader('STLFile/Link4.STL')
 
 	def setXRotation(self, angle):
 		self.normalizeAngle(angle)
 		if angle != self.xRot:
 			self.xRot = angle
 			self.xRotationChanged.emit(angle)
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 			self.updateGL()
 
 	def setYRotation(self, angle):
@@ -42,13 +62,15 @@ class GLWidget(QtOpenGL.QGLWidget):
 		if angle != self.yRot:
 			self.yRot = angle
 			self.yRotationChanged.emit(angle)
-			self.updateGL()
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+			# self.updateGL()
 
 	def setZRotation(self, angle):
 		self.normalizeAngle(angle)
 		if angle != self.zRot:
 			self.zRot = angle
 			self.zRotationChanged.emit(angle)
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 			self.updateGL()
 
 	def setXYTranslate(self, dx, dy):
@@ -58,6 +80,9 @@ class GLWidget(QtOpenGL.QGLWidget):
 
 	def setZoom(self, zoom):
 		self.z_zoom = zoom
+		self.updateGL()
+
+	def updateJoint(self):
 		self.updateGL()
 
 	def initializeGL(self):
@@ -83,6 +108,43 @@ class GLWidget(QtOpenGL.QGLWidget):
 		glEnable(GL_NORMALIZE)
 		glClearColor(0.0, 0.0, 0.0, 1.0)
 
+	def drawGL(self):
+		self.drawGrid()
+		self.setupColor([96.0 / 255, 96 / 255.0, 192.0 / 255])
+		self.model0.draw()
+		self.setupColor([169.0 / 255, 169.0 / 255, 169.0 / 255])
+
+		# Link1
+		glTranslatef(0.0, 0.0, self.d1);
+		glRotatef(self.q1, 0.0, 0.0, 1.0)
+		glTranslatef(self.a1, 0.0, 0.0)
+		glRotatef(self.alpha1, 1.0, 0.0, 0.0); #x 90
+		self.model1.draw()
+
+		#Link2
+		self.setupColor([90.0 / 255, 150.0 / 255, 9.0 / 255])
+		glTranslatef(0.0, 0.0, self.d2);
+		glRotatef(self.q2, 0.0, 0.0, 1.0)
+		glTranslatef(self.a2, 0.0, 0.0)
+		glRotatef(self.alpha2, 1.0, 0.0, 0.0); #x 90
+		self.model2.draw()
+
+		#Link3
+		self.setupColor([255.0 / 255, 255.0 / 255, 9.0 / 255])
+		glTranslatef(0.0, 0.0, self.d3);
+		glRotatef(self.q3, 0.0, 0.0, 1.0)
+		glTranslatef(self.a3, 0.0, 0.0)
+		glRotatef(self.alpha3, 1.0, 0.0, 0.0); #x 90
+		self.model3.draw()
+
+		#Link4
+		self.setupColor([120.0 / 255, 255.0 / 255, 9.0 / 255])
+		glTranslatef(0.0, 0.0, self.d4);
+		glRotatef(self.q4, 0.0, 0.0, 1.0)
+		glTranslatef(self.a4, 0.0, 0.0)
+		glRotatef(self.alpha4, 1.0, 0.0, 0.0); #x 90
+		self.model4.draw()
+
 	def paintGL(self):
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 		glPushMatrix()
@@ -92,14 +154,7 @@ class GLWidget(QtOpenGL.QGLWidget):
 		glRotated(self.yRot / 16.0, 0.0, 1.0, 0.0)
 		glRotated(self.zRot / 16.0, 0.0, 0.0, 1.0)
 		glRotated(+90.0, 1.0, 0.0, 0.0)
-		self.drawGrid()
-		self.setupColor([96.0 / 255, 96 / 255.0, 192.0 / 255])
-		self.model0.draw()
-		self.setupColor([169.0 / 255, 169.0 / 255, 169.0 / 255])
-		glRotatef(0, 0.0, 0.0, 1.0)
-		glTranslatef(0.0, 0.0, 136);
-		glRotatef(90, 1.0, 0.0, 0.0);
-		self.model1.draw()
+		self.drawGL()
 		glPopMatrix()
 
 	def resizeGL(self, width, height):
@@ -122,7 +177,7 @@ class GLWidget(QtOpenGL.QGLWidget):
 		color = [0.0, 1.0, 1.0]
 		glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, color);
 		step = 50
-		num = 24
+		num = 15
 		for i in arange(-num, num+1):
 			glBegin(GL_LINES)
 			glVertex3f(i*step, -num * step, 0)
@@ -136,8 +191,8 @@ class GLWidget(QtOpenGL.QGLWidget):
 		dx = event.x() - self.lastPos.x()
 		dy = event.y() - self.lastPos.y()
 		if event.buttons() & QtCore.Qt.LeftButton:
-			self.setXRotation(self.xRot + 8 * dy)
-			self.setYRotation(self.yRot - 8 * dx)
+			self.setXRotation(self.xRot + 4 * dy)
+			self.setYRotation(self.yRot - 4 * dx)
 		elif event.buttons() & QtCore.Qt.RightButton:
 			self.setZoom(self.z_zoom + 5.0*dy)
 		elif event.buttons() & QtCore.Qt.MidButton:
