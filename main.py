@@ -1,18 +1,19 @@
 import sys
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
-# from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import *
 import OpenGLControl as DrawRB
 from PyQt5.QtWidgets import QApplication
+from ConfigRobot import *
 class RobotSimulator(QMainWindow, QTabWidget):
 	def tick():
-		self.glWidget.q1 = self.glWidget.q1 + 1
-		self.glWidget.updateJoint()
+		self.RB.q1 = self.RB.q1 + 1
+		self.RB.updateJoint()
 
 	def __init__(self, parent = None):
 		super(RobotSimulator, self).__init__(parent)
 		self.timer = QTimer()
+		self.cf = ConfigRobot()
 		# create menu
 		bar = self.menuBar()
 		file = bar.addMenu("File")
@@ -21,13 +22,13 @@ class RobotSimulator(QMainWindow, QTabWidget):
 		file.addAction("Quit")
 		file.addAction("Open")
 
-		# embeded OpenGL into Widget
-		# glWidget = OpenGLControl.GLWidget(self)
-		self.glWidget = DrawRB.GLWidget(self)
-		self.setCentralWidget(self.glWidget)
+		self.RB = DrawRB.GLWidget(self)
+		self.setCentralWidget(self.RB)
 
 		# Setup Dock Control
 		self.items = QDockWidget("Control", self)
+
+
 		win = QWidget()
 		fbox = QFormLayout()	
 		hbox1 = QHBoxLayout()
@@ -35,80 +36,143 @@ class RobotSimulator(QMainWindow, QTabWidget):
 		hbox3 = QHBoxLayout()
 		hbox4 = QHBoxLayout()
 
+		self.tabs = QTabWidget()
+		self.tab1 = QWidget()
+		self.tab2 = QWidget()
 
-		self.slider_1 = QSlider(Qt.Horizontal)
-		self.slider_2 = QSlider(Qt.Horizontal)
-		self.slider_3 = QSlider(Qt.Horizontal)
-		self.slider_4 = QSlider(Qt.Horizontal)
-		self.value1 = QLineEdit()
-		self.value1.setFont(QFont("Arial",8))
-		self.value2 = QLineEdit()
-		self.value2.setFont(QFont("Arial",8))
-		self.value3 = QLineEdit()
-		self.value3.setFont(QFont("Arial",8))
-		self.value4 = QLineEdit()
-		self.value4.setFont(QFont("Arial",8))
+		# add tab
+		self.tabs.addTab(self.tab1, "Joint")
+		self.tabs.addTab(self.tab2, "End Effector")
+		# components of tab1
+		self.tab1.layout = QFormLayout(self)
+		self.sliderQ1 = QSlider(Qt.Horizontal)
+		self.sliderQ2 = QSlider(Qt.Horizontal)
+		self.sliderQ3 = QSlider(Qt.Horizontal)
+		self.sliderQ4 = QSlider(Qt.Horizontal)
+		self.valueQ1 = QLineEdit()
+		self.valueQ2 = QLineEdit()
+		self.valueQ3 = QLineEdit()
+		self.valueQ4 = QLineEdit()
 
-		self.slider_1.setMinimum(0)
-		self.slider_1.setMaximum(360)
-		self.slider_1.setValue(180)
-		self.slider_1.setTickPosition(QSlider.TicksBelow)
-		self.slider_1.setTickInterval(5)
-		self.slider_1.valueChanged.connect(self.valuechangeslider1)
+		self.sliderQ1.setMinimum(-360)
+		self.sliderQ1.setMaximum(360)
+		self.sliderQ1.setValue(RadToDeg(self.cf.q_init[0]))
+		self.sliderQ1.setTickPosition(QSlider.TicksBelow)
+		self.sliderQ1.setTickInterval(1)
+		self.sliderQ1.valueChanged.connect(lambda: self.valueChangeQVars(0, self.sliderQ1.value()))
 
-		self.slider_2.setMinimum(0)
-		self.slider_2.setMaximum(360)
-		self.slider_2.setValue(180)
-		self.slider_2.setTickPosition(QSlider.TicksBelow)
-		self.slider_2.setTickInterval(5)
-		self.slider_2.valueChanged.connect(self.valuechangeslider2)
+		self.sliderQ2.setMinimum(-360)
+		self.sliderQ2.setMaximum(360)
+		self.sliderQ2.setValue(RadToDeg(self.cf.q_init[1]))
+		self.sliderQ2.setTickPosition(QSlider.TicksBelow)
+		self.sliderQ2.setTickInterval(1)
+		self.sliderQ2.valueChanged.connect(lambda: self.valueChangeQVars(1, self.sliderQ2.value()))
 
-		self.slider_3.setMinimum(0)
-		self.slider_3.setMaximum(360)
-		self.slider_3.setValue(180)
-		self.slider_3.setTickPosition(QSlider.TicksBelow)
-		self.slider_3.setTickInterval(5)
-		self.slider_3.valueChanged.connect(self.valuechangeslider3)
+		self.sliderQ3.setMinimum(-360)
+		self.sliderQ3.setMaximum(360)
+		self.sliderQ3.setValue(RadToDeg(self.cf.q_init[2]))
+		self.sliderQ3.setTickPosition(QSlider.TicksBelow)
+		self.sliderQ3.setTickInterval(1)
+		self.sliderQ3.valueChanged.connect(lambda: self.valueChangeQVars(2, self.sliderQ3.value()))
 
-		self.slider_4.setMinimum(0)
-		self.slider_4.setMaximum(360)
-		self.slider_4.setValue(180)
-		self.slider_4.setTickPosition(QSlider.TicksBelow)
-		self.slider_4.setTickInterval(5)
-		self.slider_4.valueChanged.connect(self.valuechangeslider4)
+		self.sliderQ4.setMinimum(-360)
+		self.sliderQ4.setMaximum(360)
+		self.sliderQ4.setValue(RadToDeg(self.cf.q_init[3]))
+		self.sliderQ4.setTickPosition(QSlider.TicksBelow)
+		self.sliderQ4.setTickInterval(1)
+		self.sliderQ4.valueChanged.connect(lambda: self.valueChangeQVars(3, self.sliderQ4.value()))
 
-
-
-
-		hbox1.addWidget(self.slider_1)
-		hbox1.addWidget(self.value1)
+		hbox1.addWidget(self.sliderQ1)
+		hbox1.addWidget(self.valueQ1)
 		hbox1.addStretch()
-		hbox2.addWidget(self.slider_2)
-		hbox2.addWidget(self.value2)
+		hbox2.addWidget(self.sliderQ2)
+		hbox2.addWidget(self.valueQ2)
 		hbox2.addStretch()
-		hbox3.addWidget(self.slider_3)
-		hbox3.addWidget(self.value3)
+		hbox3.addWidget(self.sliderQ3)
+		hbox3.addWidget(self.valueQ3)
 		hbox3.addStretch()
-		hbox4.addWidget(self.slider_4)
-		hbox4.addWidget(self.value4)
+		hbox4.addWidget(self.sliderQ4)
+		hbox4.addWidget(self.valueQ4)
 		hbox4.addStretch()
 
+		textslderQ1 = QLabel("q1")
+		textslderQ2 = QLabel("q2")
+		textslderQ3 = QLabel("q3")
+		textslderQ4 = QLabel("q4")
+		self.tab1.layout.addRow(textslderQ1,hbox1)
+		self.tab1.layout.addRow(textslderQ2,hbox2)
+		self.tab1.layout.addRow(textslderQ3,hbox3)
+		self.tab1.layout.addRow(textslderQ4,hbox4)
+		self.tab1.layout.addRow(QPushButton("KHUONG"))
+		self.tab1.setLayout(self.tab1.layout)
 
+		# components of tab2
+		self.tab2.layout = QFormLayout(self)
+		# self.sliderX = QSlider(Qt.Horizontal)
+		# self.sliderY = QSlider(Qt.Horizontal)
+		# self.sliderZ = QSlider(Qt.Horizontal)
+		# self.sliderR = QSlider(Qt.Horizontal)
+		# self.sliderP = QSlider(Qt.Horizontal)
+		# self.sliderY = QSlider(Qt.Horizontal)
+		# self.valueX = QLineEdit()
+		# self.valueY = QLineEdit()
+		# self.valueZ = QLineEdit()
+		# self.valueR = QLineEdit()
+		# self.valueP = QLineEdit()
+		# self.valueY = QLineEdit()
+		# self.sliderX.setMinimum(-1000)
+		# self.sliderX.setMaximum(1000)
+		# self.sliderQ1.setValue(RadToDeg(self.cf.q_init[0]))
+		# self.sliderQ1.setTickPosition(QSlider.TicksBelow)
+		# self.sliderQ1.setTickInterval(1)
+		# self.sliderQ1.valueChanged.connect(lambda :valueChangeQVars(0, self.sliderQ1.value()))
 
-		textslder_1 = QLabel("q1")
-		textslder_2 = QLabel("q2")
-		textslder_3 = QLabel("q3")
-		textslder_4 = QLabel("q4")
-		fbox.addRow(textslder_1,hbox1)
-		fbox.addRow(textslder_2,hbox2)
-		fbox.addRow(textslder_3,hbox3)
-		fbox.addRow(textslder_4,hbox4)
-		fbox.addRow(QPushButton("KHUONG"))
-		fbox.addRow(QPushButton("DONG"))
-		fbox.addRow(QPushButton("VU"))
+		# self.sliderQ2.setMinimum(-360)
+		# self.sliderQ2.setMaximum(360)
+		# self.sliderQ2.setValue(RadToDeg(self.cf.q_init[1]))
+		# self.sliderQ2.setTickPosition(QSlider.TicksBelow)
+		# self.sliderQ2.setTickInterval(1)
+		# self.sliderQ2.valueChanged.connect(self.valuechangeslider2)
 
+		# self.sliderQ3.setMinimum(-360)
+		# self.sliderQ3.setMaximum(360)
+		# self.sliderQ3.setValue(RadToDeg(self.cf.q_init[2]))
+		# self.sliderQ3.setTickPosition(QSlider.TicksBelow)
+		# self.sliderQ3.setTickInterval(1)
+		# self.sliderQ3.valueChanged.connect(self.valuechangeslider3)
 
+		# self.sliderQ4.setMinimum(-360)
+		# self.sliderQ4.setMaximum(360)
+		# self.sliderQ4.setValue(RadToDeg(self.cf.q_init[3]))
+		# self.sliderQ4.setTickPosition(QSlider.TicksBelow)
+		# self.sliderQ4.setTickInterval(1)
+		# self.sliderQ4.valueChanged.connect(self.valuechangeslider4)
 
+		# hbox1.addWidget(self.sliderQ1)
+		# hbox1.addWidget(self.value1)
+		# hbox1.addStretch()
+		# hbox2.addWidget(self.sliderQ2)
+		# hbox2.addWidget(self.value2)
+		# hbox2.addStretch()
+		# hbox3.addWidget(self.sliderQ3)
+		# hbox3.addWidget(self.value3)
+		# hbox3.addStretch()
+		# hbox4.addWidget(self.sliderQ4)
+		# hbox4.addWidget(self.value4)
+		# hbox4.addStretch()
+
+		# textslder_1 = QLabel("q1")
+		# textslder_2 = QLabel("q2")
+		# textslder_3 = QLabel("q3")
+		# textslder_4 = QLabel("q4")
+		# self.tab2.layout.addRow(textslder_1,hbox1)
+		# self.tab2.layout.addRow(textslder_2,hbox2)
+		# self.tab2.layout.addRow(textslder_3,hbox3)
+		# self.tab2.layout.addRow(textslder_4,hbox4)
+		# self.tab2.layout.addRow(QPushButton("KHUONG"))
+		self.tab2.setLayout(self.tab2.layout)
+		# add tabs to widget
+		fbox.addWidget(self.tabs)
 		win.setLayout(fbox)
 		self.items.setWidget(win)
 		self.items.setFloating(False)
@@ -117,32 +181,10 @@ class RobotSimulator(QMainWindow, QTabWidget):
 		# Setup properties of program
 		self.setWindowTitle("Robot Design")
 
+	def valueChangeQVars(self, index, value):
+		self.RB.q[index] = DegToRad(value)
+		self.RB.updateGL()
 
-
-	def valuechangeslider1(self):
-		valueslider1 = self.slider_1.value()
-		self.value1.setText(str(valueslider1))
-		self.glWidget.q1 = valueslider1
-		self.glWidget.updateJoint()
-
-	def valuechangeslider2(self):
-		valueslider2 = self.slider_2.value()
-		self.value2.setText(str(valueslider2))
-		self.glWidget.q2 = valueslider2
-		self.glWidget.updateJoint()
-		pass
-	def valuechangeslider3(self):
-		valueslider3 = self.slider_3.value()
-		self.value3.setText(str(valueslider3))
-		self.glWidget.q3 = valueslider3
-		self.glWidget.updateJoint()
-		pass
-	def valuechangeslider4(self):
-		valueslider4 = self.slider_4.value()
-		self.value4.setText(str(valueslider4))
-		self.glWidget.q4 = valueslider4
-		self.glWidget.updateJoint()
-		pass
 def main():
 	app = QApplication(sys.argv)
 	ex = RobotSimulator()

@@ -4,7 +4,8 @@ from OpenGL import GLU
 from OpenGL.GL import *
 from numpy import array, arange
 from STLFile import *
-from stl.ascii import *
+from ConfigRobot import *
+from GlobalFunc import *
 
 class GLWidget(QtOpenGL.QGLWidget):
 	xRotationChanged = QtCore.pyqtSignal(int)
@@ -13,36 +14,20 @@ class GLWidget(QtOpenGL.QGLWidget):
 
 	def __init__(self, parent=None):
 		super(GLWidget, self).__init__(parent)
-		self.q1 = 0
-		self.q2 = 0
-		self.q3 = 0
-		self.q4 = 0
+		#init parameter of DH table
+		self.cf = ConfigRobot()
+		self.q = self.cf.q_init
+		self.d = self.cf.d
+		self.a = self.cf.a
+		self.alpha = self.cf.alpha
 
-		self.d1 = 89.2
-		self.d2 = -135.7
-		self.d3 = 130.4
-		self.d4 = 0 
-
-		self.a1 = 0
-		self.a2 = 300
-		self.a3 = 383
-		self.a4 = 60.04
-
-		self.alpha1 = -90
-		self.alpha2 = 0
-		self.alpha3 = 0
-		self.alpha4 = 0
-
-		self.gear1 = 0
-		self.gear2 = 0
-		self.gear3 = 0
 		self.xRot = -2584
 		self.yRot = -512
 		self.zRot = 0.0
 		self.z_zoom = -3500
 		self.xTran = 0
 		self.yTran = 0
-		#init stl files
+
 		self.model0 = loader('STLFile/Link0.STL')
 		self.model1 = loader('STLFile/Link1.STL')
 		self.model2 = loader('STLFile/Link2.STL')
@@ -115,34 +100,34 @@ class GLWidget(QtOpenGL.QGLWidget):
 		self.setupColor([169.0 / 255, 169.0 / 255, 169.0 / 255])
 
 		# Link1
-		glTranslatef(0.0, 0.0, self.d1);
-		glRotatef(self.q1, 0.0, 0.0, 1.0)
-		glTranslatef(self.a1, 0.0, 0.0)
-		glRotatef(self.alpha1, 1.0, 0.0, 0.0); #x 90
+		glTranslatef(0.0, 0.0, self.d[0]);
+		glRotatef(RadToDeg(self.q[0]), 0.0, 0.0, 1.0)
+		glTranslatef(self.a[0], 0.0, 0.0)
+		glRotatef(RadToDeg(self.alpha[0]), 1.0, 0.0, 0.0);
 		self.model1.draw()
 
 		#Link2
 		self.setupColor([90.0 / 255, 150.0 / 255, 9.0 / 255])
-		glTranslatef(0.0, 0.0, self.d2);
-		glRotatef(self.q2, 0.0, 0.0, 1.0)
-		glTranslatef(self.a2, 0.0, 0.0)
-		glRotatef(self.alpha2, 1.0, 0.0, 0.0); #x 90
+		glTranslatef(0.0, 0.0, self.d[1]);
+		glRotatef(RadToDeg(self.q[1]), 0.0, 0.0, 1.0)
+		glTranslatef(self.a[1], 0.0, 0.0)
+		glRotatef(RadToDeg(self.alpha[1]), 1.0, 0.0, 0.0);
 		self.model2.draw()
 
 		#Link3
 		self.setupColor([255.0 / 255, 255.0 / 255, 9.0 / 255])
-		glTranslatef(0.0, 0.0, self.d3);
-		glRotatef(self.q3, 0.0, 0.0, 1.0)
-		glTranslatef(self.a3, 0.0, 0.0)
-		glRotatef(self.alpha3, 1.0, 0.0, 0.0); #x 90
+		glTranslatef(0.0, 0.0, self.d[2]);
+		glRotatef(RadToDeg(self.q[2]), 0.0, 0.0, 1.0)
+		glTranslatef(self.a[2], 0.0, 0.0)
+		glRotatef(RadToDeg(self.alpha[2]), 1.0, 0.0, 0.0);
 		self.model3.draw()
 
 		#Link4
 		self.setupColor([120.0 / 255, 255.0 / 255, 9.0 / 255])
-		glTranslatef(0.0, 0.0, self.d4);
-		glRotatef(self.q4, 0.0, 0.0, 1.0)
-		glTranslatef(self.a4, 0.0, 0.0)
-		glRotatef(self.alpha4, 1.0, 0.0, 0.0); #x 90
+		glTranslatef(0.0, 0.0, self.d[3]);
+		glRotatef(RadToDeg(self.q[3]), 0.0, 0.0, 1.0)
+		glTranslatef(self.a[3], 0.0, 0.0)
+		glRotatef(RadToDeg(self.alpha[3]), 1.0, 0.0, 0.0);
 		self.model4.draw()
 
 	def paintGL(self):
