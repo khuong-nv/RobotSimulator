@@ -107,7 +107,7 @@ class GLWidget(QtOpenGL.QGLWidget):
 		self.model1.draw()
 
 		#Link2
-		self.setupColor([90.0 / 255, 150.0 / 255, 9.0 / 255])
+		# self.setupColor([90.0 / 255, 150.0 / 255, 9.0 / 255])
 		glTranslatef(0.0, 0.0, self.d[1]);
 		glRotatef(RadToDeg(self.q[1]), 0.0, 0.0, 1.0)
 		glTranslatef(self.a[1], 0.0, 0.0)
@@ -115,7 +115,7 @@ class GLWidget(QtOpenGL.QGLWidget):
 		self.model2.draw()
 
 		#Link3
-		self.setupColor([255.0 / 255, 255.0 / 255, 9.0 / 255])
+		# self.setupColor([255.0 / 255, 255.0 / 255, 9.0 / 255])
 		glTranslatef(0.0, 0.0, self.d[2]);
 		glRotatef(RadToDeg(self.q[2]), 0.0, 0.0, 1.0)
 		glTranslatef(self.a[2], 0.0, 0.0)
@@ -123,7 +123,7 @@ class GLWidget(QtOpenGL.QGLWidget):
 		self.model3.draw()
 
 		#Link4
-		self.setupColor([120.0 / 255, 255.0 / 255, 9.0 / 255])
+		self.setupColor([0 / 255, 0 / 255, 255 / 255])
 		glTranslatef(0.0, 0.0, self.d[3]);
 		glRotatef(RadToDeg(self.q[3]), 0.0, 0.0, 1.0)
 		glTranslatef(self.a[3], 0.0, 0.0)
