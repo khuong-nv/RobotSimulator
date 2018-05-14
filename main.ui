@@ -79,7 +79,7 @@
         </sizepolicy>
        </property>
        <property name="currentIndex">
-        <number>0</number>
+        <number>1</number>
        </property>
        <widget class="QWidget" name="tab_1">
         <attribute name="title">
@@ -311,7 +311,7 @@
             <number>6</number>
            </property>
            <item row="0" column="1">
-            <widget class="QSlider" name="sliderR">
+            <widget class="QSlider" name="sliderAngleR">
              <property name="orientation">
               <enum>Qt::Horizontal</enum>
              </property>
@@ -325,7 +325,7 @@
             </widget>
            </item>
            <item row="0" column="2">
-            <widget class="QLabel" name="valueR">
+            <widget class="QLabel" name="valueAngleR">
              <property name="text">
               <string>value</string>
              </property>
@@ -443,7 +443,7 @@
             <number>6</number>
            </property>
            <item row="0" column="1">
-            <widget class="QSlider" name="sliderP">
+            <widget class="QSlider" name="sliderAngleP">
              <property name="orientation">
               <enum>Qt::Horizontal</enum>
              </property>
@@ -457,7 +457,7 @@
             </widget>
            </item>
            <item row="0" column="2">
-            <widget class="QLabel" name="valueP">
+            <widget class="QLabel" name="valueAngleP">
              <property name="text">
               <string>value</string>
              </property>
@@ -471,7 +471,7 @@
             <number>6</number>
            </property>
            <item row="0" column="1">
-            <widget class="QSlider" name="sliderY_2">
+            <widget class="QSlider" name="sliderAngleY">
              <property name="orientation">
               <enum>Qt::Horizontal</enum>
              </property>
@@ -485,7 +485,7 @@
             </widget>
            </item>
            <item row="0" column="2">
-            <widget class="QLabel" name="valueY_2">
+            <widget class="QLabel" name="valueAngleY">
              <property name="text">
               <string>value</string>
              </property>
