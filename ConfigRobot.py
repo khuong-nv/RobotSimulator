@@ -9,7 +9,7 @@ class ConfigRobot(object):
 		# self.alpha = math.pi/180*np.array([-90, 0, 0, 0])
 		# self.q_init = math.pi/180*np.array([0, 0, 0, 0])
 		self.alpha = DegToRad(np.array([0, -90, 0, 0, 0]))
-		self.q_init = DegToRad(np.array([0, 0, 0, 0, 0]))
+		self.q_init = DegToRad(np.array([0, -29, -41, 68, 63]))
 		
 	def get_q_init(self):
 		return self.q_init

@@ -2,6 +2,7 @@ from PyQt5 import QtCore, QtGui
 from PyQt5 import QtOpenGL
 from OpenGL import GLU
 from OpenGL.GL import *
+from OpenGL.GLUT import *
 from numpy import array, arange
 from STLFile import *
 # from ConfigRobot import *
@@ -28,6 +29,8 @@ class GLWidget(QtOpenGL.QGLWidget):
 		self.model2 = loader('STLFile/Link2.STL')
 		self.model3 = loader('STLFile/Link3.STL')
 		self.model4 = loader('STLFile/Link4.STL')
+
+		self.listPoints = np.array([[0,0,0]])
 
 	def setXRotation(self, angle):
 		self.normalizeAngle(angle)
@@ -89,6 +92,7 @@ class GLWidget(QtOpenGL.QGLWidget):
 		glClearColor(0.0, 0.0, 0.0, 1.0)
 
 	def drawGL(self):
+		glPushMatrix()
 		self.drawGrid()
 		self.setupColor([96.0 / 255, 96 / 255.0, 192.0 / 255])
 		self.model0.draw()
@@ -96,7 +100,7 @@ class GLWidget(QtOpenGL.QGLWidget):
 
 		# Link1
 		glTranslatef(0.0, 0.0, self.objRobot.d[1]);
-		glRotatef(RadToDeg(self.objRobot.q[1]), 0.0, 0.0, 1.0)
+		glRotatef(RadToDeg(self.objRobot.JVars[0]), 0.0, 0.0, 1.0)
 		glTranslatef(self.objRobot.a[1], 0.0, 0.0)
 		glRotatef(RadToDeg(self.objRobot.alpha[1]), 1.0, 0.0, 0.0);
 		self.model1.draw()
@@ -104,7 +108,7 @@ class GLWidget(QtOpenGL.QGLWidget):
 		#Link2
 		# self.setupColor([90.0 / 255, 150.0 / 255, 9.0 / 255])
 		glTranslatef(0.0, 0.0, self.objRobot.d[2]);
-		glRotatef(RadToDeg(self.objRobot.q[2]), 0.0, 0.0, 1.0)
+		glRotatef(RadToDeg(self.objRobot.JVars[1]), 0.0, 0.0, 1.0)
 		glTranslatef(self.objRobot.a[2], 0.0, 0.0)
 		glRotatef(RadToDeg(self.objRobot.alpha[2]), 1.0, 0.0, 0.0);
 		self.model2.draw()
@@ -112,29 +116,41 @@ class GLWidget(QtOpenGL.QGLWidget):
 		#Link3
 		# self.setupColor([255.0 / 255, 255.0 / 255, 9.0 / 255])
 		glTranslatef(0.0, 0.0, self.objRobot.d[3]);
-		glRotatef(RadToDeg(self.objRobot.q[3]), 0.0, 0.0, 1.0)
+		glRotatef(RadToDeg(self.objRobot.JVars[2]), 0.0, 0.0, 1.0)
 		glTranslatef(self.objRobot.a[3], 0.0, 0.0)
 		glRotatef(RadToDeg(self.objRobot.alpha[3]), 1.0, 0.0, 0.0);
 		self.model3.draw()
 
 		#Link4
-		self.setupColor([0 / 255, 0 / 255, 255 / 255])
+		self.setupColor([105.0 / 255, 180.0 / 255, 0 / 255])
 		glTranslatef(0.0, 0.0, self.objRobot.d[4]);
-		glRotatef(RadToDeg(self.objRobot.q[4]), 0.0, 0.0, 1.0)
+		glRotatef(RadToDeg(self.objRobot.JVars[3]), 0.0, 0.0, 1.0)
 		glTranslatef(self.objRobot.a[4], 0.0, 0.0)
 		glRotatef(RadToDeg(self.objRobot.alpha[4]), 1.0, 0.0, 0.0);
 		self.model4.draw()
+		glPopMatrix()
 
 	def paintGL(self):
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 		glPushMatrix()
 		glTranslate(0, 0, self.z_zoom)
-		glTranslate(self.xTran, self.yTran, 0)
+		# glTranslate(self.xTran, self.yTran, 0)
 		glRotated(self.xRot / 16.0, 1.0, 0.0, 0.0)
 		glRotated(self.yRot / 16.0, 0.0, 1.0, 0.0)
 		glRotated(self.zRot / 16.0, 0.0, 0.0, 1.0)
 		glRotated(+90.0, 1.0, 0.0, 0.0)
 		self.drawGL()
+		self.DrawPoint([1.0, 0, 0], 3)
+		glPopMatrix()
+
+	def DrawPoint(self, color, size):
+		glPushMatrix()
+		glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, color);
+		glPointSize(size);
+		glBegin(GL_POINTS)
+		for i in self.listPoints:
+			glVertex3f(i[0], i[1], i[2])
+		glEnd()
 		glPopMatrix()
 
 	def resizeGL(self, width, height):

@@ -29,4 +29,38 @@ def DHMatrix(q, d, a, alpha):
 					[sin(q), cos(alpha)*cos(q), -sin(alpha)*cos(q), a*sin(q)],
 					[0, sin(alpha), cos(alpha), d],
 					[0,0,0,1]])
-		
+def SmartDegSubstraction(v2, v1):
+	# v2 and v1 is numpy array
+	size = v2.shape[0]
+	Result = v2 - v1
+	for i in np.arange(size):
+		if Result[i] > pi:
+			Result[i] -= 2 * pi
+		elif (Result[i] < -pi):
+			Result[i] += 2 * pi
+	return Result
+
+def LoadGCode(filename, offsetx, offsety, offsetz):
+	file_obj = open(filename, "r")
+	list_of_line = file_obj.readlines()
+	list_of_gcode = []
+	act = 0
+	list_of_point = []
+	for ls in list_of_line:
+		if ("G1" in ls) or ("M300" in ls):
+			list_of_gcode.append(ls)
+
+	for ls in list_of_gcode:
+		if "M300" in ls:
+			ls_split_space = ls.split(" ")
+			if ls_split_space[1] == "S30.00":
+				act = 1
+			elif(ls_split_space[1] == "S50.00"):
+				act = 0
+		if "G1" in ls:
+			ls_split_space = ls.split(" ")
+			x = offsetx + float(ls_split_space[1][1:])
+			y = offsety + float(ls_split_space[2][1:])
+			z = offsetz
+			list_of_point.append([x, y, z, act])
+	return np.asarray(list_of_point)

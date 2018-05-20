@@ -11,29 +11,46 @@ class Robot(object):
 		self.alpha = self.cf.alpha
 		self.fwd = FwdKinematics()
 		self.inv = InvKinematics()
-		self.x, self.y, self.z, self.psi, self.theta, self.phi = self.fwd.Cal_Fwd_Position(*tuple(self.q[1:]))
+		self.JVars = self.cf.q_init[1:]
+		self.q1P = self.JVars
+		self.q2P = self.JVars
+		self.EVars = []
+		self.EVars = self.fwd.Cal_Fwd_Position(self.JVars)
 	
-	def CalFwdPostion(self, q1, q2, q3, q4):
-		self.x, self.y, self.z, self.psi, self.theta, self.phi = self.fwd.Cal_Fwd_Position(q1, q2, q3, q4)
+	def CalFwdPostion(self, JVars):
+		self.JVars = JVars
+		self.q1P = self.q2P = JVars
+		self.EVars = self.fwd.Cal_Fwd_Position(JVars)
 
-	def CalInvPostion(self, x, y, z, psi, theta, phi):
-		self.x = x
-		self.y = y
-		self.z = z
-		self.psi = psi
-		self.theta = theta
-		self.phi = phi
-		result = tuple()
-		print(x, " ", y)
-		result = self.inv.Cal_Inv_Position(self.x, self.y, self.z, self.psi, self.theta, self.phi)
-		self.q[1:] = list(result)
-
-
-	def GetCurrentPostion(self):
-		return self.x, self.y, self.z
-
-	def GetCurrentAngle(self):
-		return self.psi, self.theta, self.phi
+	def CalInvPostion(self, EVars):
+		sol = self.inv.FindTheBestSolution(EVars, self.q1P, self.q2P)
+		if sol != None:
+			result = self.inv.Cal_Inv_Position(EVars, sol)
+			if result[0] != False:
+				self.x = EVars[0]
+				self.y = EVars[1]
+				self.z = EVars[2]
+				self.psi = EVars[3]
+				self.theta = EVars[4]
+				self.phi = EVars[5]
+				self.JVars= result[1]
+				self.q2P = self.q1P
+				self.q1P = self.JVars
+			else:
+				print("error while calculate")
+				
+	def CalInvPositionEx(self, EVars, q1p, q2p):
+		sol = self.inv.FindTheBestSolution(EVars, q1p, q2p)
+		if sol != None:
+			result = self.inv.Cal_Inv_Position(EVars, sol)
+			if result[0] != False:
+				JVars= result[1]
+				return JVars
+			else:
+				print("error while calculate")
+				return None
+		else:
+			return None
 
 	def GetCurrentStatus(self):
-		return self.GetCurrentPostion() + self.GetCurrentAngle()
+		return self.EVars
