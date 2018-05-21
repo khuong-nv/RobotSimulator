@@ -7,19 +7,24 @@ class Trajectory(object):
 		self.startPoint = startPoint
 		self.endPoint = endPoint
 		self.sp_time = 0.5
+		self.velocity = 5
 
-	def SetPoint(self, startPoint, endPoint):
+	def SetPoint(self, startPoint, endPoint, velocity = 5):
 		self.startPoint = startPoint
 		self.endPoint = endPoint
+		self.velocity = velocity
 
 	def SetSpTime(self, time):
 		self.sp_time = time
 
 	def Calculate(self):
 		distance = np.linalg.norm(self.endPoint - self.startPoint)
-		v0 = 0.2
-		T = int(distance/v0)
-		numT = int(T/self.sp_time)
+		if abs(distance - 0) < 0.01:
+			return False, 
+		T = distance/self.velocity
+		if T == 0:
+			return False, 
+		numT = int(round(T/self.sp_time, 2))
 		s0 = 0; sn = distance
 		h = sn - s0
 		a0 = s0
@@ -30,8 +35,8 @@ class Trajectory(object):
 		a5 = 1.0/(2 * T**5) * 12*h
 		point = np.array([[None, None, None]])
 		for i in range(numT+1):
-			t = i*T/numT
+			t = i*self.sp_time
 			s = a0 + a1*t + a2*t**2 + a3*t**3 + a4*t**4 + a5*t**5
 			point = np.append(point, [self.startPoint + ((self.endPoint - self.startPoint)/distance) * s], axis = 0)
 		point = np.delete(point, 0, axis = 0)
-		return point
+		return True, point

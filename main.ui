@@ -254,6 +254,13 @@
            </item>
           </layout>
          </item>
+         <item row="5" column="0">
+          <widget class="QPushButton" name="btnUpdateStatusTab1">
+           <property name="text">
+            <string>Update Status</string>
+           </property>
+          </widget>
+         </item>
         </layout>
        </widget>
        <widget class="QWidget" name="tab_2">
@@ -261,6 +268,34 @@
          <string>End Effector</string>
         </attribute>
         <layout class="QGridLayout" name="gridLayout_13">
+         <item row="5" column="0">
+          <layout class="QGridLayout" name="gridLayout_35">
+           <property name="horizontalSpacing">
+            <number>6</number>
+           </property>
+           <item row="0" column="1">
+            <widget class="QSlider" name="sliderZ">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="0">
+            <widget class="QLabel" name="label_48">
+             <property name="text">
+              <string>Z: </string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="2">
+            <widget class="QLabel" name="valueZ">
+             <property name="text">
+              <string>value</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
          <item row="1" column="0">
           <layout class="QGridLayout" name="gridLayout_12">
            <property name="horizontalSpacing">
@@ -377,34 +412,6 @@
            </item>
           </layout>
          </item>
-         <item row="5" column="0">
-          <layout class="QGridLayout" name="gridLayout_35">
-           <property name="horizontalSpacing">
-            <number>6</number>
-           </property>
-           <item row="0" column="1">
-            <widget class="QSlider" name="sliderZ">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="0">
-            <widget class="QLabel" name="label_48">
-             <property name="text">
-              <string>Z: </string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="2">
-            <widget class="QLabel" name="valueZ">
-             <property name="text">
-              <string>value</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
          <item row="4" column="0">
           <spacer name="verticalSpacer_44">
            <property name="orientation">
@@ -509,7 +516,7 @@
            </property>
           </spacer>
          </item>
-         <item row="12" column="0">
+         <item row="14" column="0">
           <spacer name="verticalSpacer_12">
            <property name="orientation">
             <enum>Qt::Vertical</enum>
@@ -537,6 +544,13 @@
             </size>
            </property>
           </spacer>
+         </item>
+         <item row="12" column="0">
+          <widget class="QPushButton" name="btnUpdateStatusTab2">
+           <property name="text">
+            <string>Update Status</string>
+           </property>
+          </widget>
          </item>
         </layout>
        </widget>
@@ -590,7 +604,7 @@
            <item row="2" column="1">
             <widget class="QLabel" name="valueStatus">
              <property name="text">
-              <string>Value</string>
+              <string>None</string>
              </property>
             </widget>
            </item>

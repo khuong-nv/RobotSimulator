@@ -1,5 +1,6 @@
 from ConfigRobot import *
 from Kinematics import *
+import numpy as np
 class Robot(object):
 	"""docstring for Robot"""
 	def __init__(self):
@@ -14,7 +15,7 @@ class Robot(object):
 		self.JVars = self.cf.q_init[1:]
 		self.q1P = self.JVars
 		self.q2P = self.JVars
-		self.EVars = []
+		self.EVars = np.array([])
 		self.EVars = self.fwd.Cal_Fwd_Position(self.JVars)
 	
 	def CalFwdPostion(self, JVars):
@@ -27,12 +28,7 @@ class Robot(object):
 		if sol != None:
 			result = self.inv.Cal_Inv_Position(EVars, sol)
 			if result[0] != False:
-				self.x = EVars[0]
-				self.y = EVars[1]
-				self.z = EVars[2]
-				self.psi = EVars[3]
-				self.theta = EVars[4]
-				self.phi = EVars[5]
+				self.EVars = EVars
 				self.JVars= result[1]
 				self.q2P = self.q1P
 				self.q1P = self.JVars
@@ -45,12 +41,12 @@ class Robot(object):
 			result = self.inv.Cal_Inv_Position(EVars, sol)
 			if result[0] != False:
 				JVars= result[1]
-				return JVars
+				return True, JVars
 			else:
 				print("error while calculate")
-				return None
+				return False, 
 		else:
-			return None
+			return False, 
 
 	def GetCurrentStatus(self):
 		return self.EVars

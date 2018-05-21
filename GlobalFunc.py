@@ -49,6 +49,8 @@ def LoadGCode(filename, offsetx, offsety, offsetz):
 	for ls in list_of_line:
 		if ("G1" in ls) or ("M300" in ls):
 			list_of_gcode.append(ls)
+		if "(end of print job)" in ls:
+			break
 
 	for ls in list_of_gcode:
 		if "M300" in ls:

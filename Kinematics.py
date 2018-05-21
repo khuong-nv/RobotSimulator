@@ -11,13 +11,14 @@ class Kinematics(object):
 		self.q = []
 		self.d = self.cf.d
 		self.a = self.cf.a
+		self.a[4] = self.a[4]
 		self.alpha = self.cf.alpha
 
 	def Cal_AMatrix(self, q1, q2, q3, q4):
 		A10 = DHMatrix(q1, self.d[1], self.a[1], self.alpha[1])
 		A21 = DHMatrix(q2, self.d[2], self.a[2], self.alpha[2])
 		A32 = DHMatrix(q3, self.d[3], self.a[3], self.alpha[3])
-		A43 = DHMatrix(q4, self.d[4], self.a[4], self.alpha[4])
+		A43 = DHMatrix(q4, self.d[4], self.a[4]+33, self.alpha[4])
 		A40 = A10.dot(A21).dot(A32).dot(A43)
 
 		return A40	
@@ -37,7 +38,7 @@ class FwdKinematics(Kinematics):
 		zE = AE[2][3]
 		psi, theta, phi = ConvertMatToRPY(AE[0:3, 0:3])
 		EVars = [xE, yE, zE, psi, theta, phi]
-		return EVars
+		return np.asarray(EVars)
 
 class InvKinematics(Kinematics):
 	"""docstring for InvKinematics"""
@@ -79,13 +80,13 @@ class InvKinematics(Kinematics):
 		theta = EVars[4]
 		phi = EVars[5]
 		s = self.Cal_Sol(sol)
-		a4 = self.cf.a[4]
-		a3 = self.cf.a[3]
-		a2 = self.cf.a[2]
-		a1 = self.cf.a[1]
-		d3 = self.cf.d[3]
-		d2 = self.cf.d[2]
-		d1 = self.cf.d[1]
+		a4 = self.a[4]+33
+		a3 = self.a[3]
+		a2 = self.a[2]
+		a1 = self.a[1]
+		d3 = self.d[3]
+		d2 = self.d[2]
+		d1 = self.d[1]
 
 		RPYMat = ConvertRPYToMat(psi, theta, phi)		
 		nx = RPYMat[0][0]

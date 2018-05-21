@@ -13,13 +13,15 @@ from GlobalFunc import *
 import OpenGLControl as DrawRB
 from Robot import *
 from Trajectory import *
-from numpy import arange, append, delete
 
 class RobotSimulator(QMainWindow):
 
 	def __init__(self, *args):
 		super(RobotSimulator, self).__init__(*args)
 		loadUi('main.ui', self)
+		self.timer  = QTimer()
+		self.count = 0
+		self.timer.timeout.connect(self.timeEvent)
 		self.objRB = Robot()
 		self.RB = DrawRB.GLWidget(self, self.objRB)
 		# self.objRB.cf = ConfigRobot()
@@ -28,6 +30,7 @@ class RobotSimulator(QMainWindow):
 		self.fileName = None
 		self.AllPoints = np.array([[None, None, None]])
 		self.AllJVars = np.array([[None, None, None, None]])
+		self.toolstatus = np.array([None])
 
 	def setupUI(self):	
 		self.setCentralWidget(self.RB)
@@ -97,6 +100,9 @@ class RobotSimulator(QMainWindow):
 		self.btnLoadFile.clicked.connect(self.LoadFile)
 		self.btnRun.clicked.connect(self.Run)
 
+		self.btnUpdateStatusTab1.clicked.connect(lambda: self.UpdateData(1))
+		self.btnUpdateStatusTab2.clicked.connect(lambda: self.UpdateData(2))
+
 	def valueChangeJVars(self, index, value):
 		self.objRB.JVars[index] = DegToRad(value)
 		self.objRB.CalFwdPostion(self.objRB.JVars)
@@ -110,7 +116,7 @@ class RobotSimulator(QMainWindow):
 		psi = DegToRad(self.sliderAngleR.value())
 		theta = DegToRad(self.sliderAngleP.value())
 		phi =  DegToRad(self.sliderAngleY.value())
-		EVars = [x, y, z, psi, theta, phi]
+		EVars = np.array([x, y, z, psi, theta, phi])
 		self.objRB.CalInvPostion(EVars)
 		self.UpdateData(2)
 		self.RB.updateGL()
@@ -120,38 +126,71 @@ class RobotSimulator(QMainWindow):
 		options |= QFileDialog.DontUseNativeDialog
 		self.fileName, _ = QFileDialog.getOpenFileName(self,"Openfile", "","Gcode Files (*.gcode);;All Files (*)", options=options)
 		self.processLoadFile.setValue(0)
+		self.valueStatus.setText("None...")
 
 	def LoadFile(self):
+		self.AllPoints = np.array([[None, None, None]])
+		self.AllJVars = np.array([[None, None, None, None]])
+		self.toolstatus = np.array([None])
+		self.valueStatus.setText("Processing...")
+		self.processLoadFile.setValue(30)
 		listPoint = LoadGCode(self.fileName, self.objRB.EVars[0], self.objRB.EVars[1], self.objRB.EVars[2])
 		self.RB.updateGL()
 		trj = Trajectory()
-		for i in arange(len(listPoint)-1):
+		listPoint = np.insert(listPoint, 0, [self.objRB.EVars[0], self.objRB.EVars[1], self.objRB.EVars[2], 0], axis = 0)
+		listPoint = np.append(listPoint, [[self.objRB.EVars[0], self.objRB.EVars[1], self.objRB.EVars[2], 0]], axis = 0)
+		toolstt_tmp = np.array([None])
+		for i in np.arange(len(listPoint)-1):
 			p1 = listPoint[i][:3]
 			p2 = listPoint[i+1][:3]
-			trj.SetPoint(p1, p2)
+			if i==0 or i == len(listPoint)-2:
+				trj.SetPoint(p1,p2,10)
+			else:
+				trj.SetPoint(p1, p2)
 			points = trj.Calculate()
-			self.AllPoints = np.append(self.AllPoints, points, axis = 0)
-
+			if points[0] == False:
+				pass
+			else:
+				self.AllPoints = np.append(self.AllPoints, points[1], axis = 0)
+				self.toolstatus = np.append(self.toolstatus, [listPoint[i+1][3]]*len(points[1]))
+					
+		self.toolstatus = np.delete(self.toolstatus, 0)
 		self.AllPoints = np.delete(self.AllPoints, 0, axis = 0)
-		self.RB.listPoints = self.AllPoints
-		self.processLoadFile.setValue(100)
-
-	def Run(self):
+		# self.RB.listPoints = self.AllPoints
+		toolstt_tmp = np.delete(toolstt_tmp, 0)
 		q1P = self.objRB.q1P
 		q2P = self.objRB.q2P
 		for p in self.AllPoints:
 			EVars = np.append(p, [self.objRB.EVars[3], self.objRB.EVars[4], self.objRB.EVars[5]])
 			JVar = self.objRB.CalInvPositionEx(EVars, q1P, q2P)
-			if JVar == None:
+			if JVar[0] == False:
 				break
-			self.AllJVars = np.append(self.AllJVars, [JVar], axis = 0)
+			self.AllJVars = np.append(self.AllJVars, [JVar[1]], axis = 0)
 			q2P = q1P
-			q1P = JVar
-			
-		print(self.AllJVars)
+			q1P = JVar[1]
+		
+		self.AllJVars = np.delete(self.AllJVars, 0, axis = 0)
+		self.processLoadFile.setValue(100)
+		if len(self.AllJVars) == len(self.AllPoints):
+			self.valueStatus.setText("All done")
+		else:
+			self.valueStatus.setText("Some points is missing")
 
 
-			
+	def Run(self):
+		self.timeEvent()
+
+	def timeEvent(self):	
+		try:
+			self.objRB.JVars = self.AllJVars[self.count]
+			if self.toolstatus[self.count] == 1:
+				self.RB.listPoints = np.append(self.RB.listPoints, [self.AllPoints[self.count]], axis = 0)
+				pass
+			self.count +=1
+			self.RB.updateGL()
+		finally:
+			if self.count < len(self.AllJVars) - 1:
+				QTimer.singleShot(0, self.timeEvent)
 
 	def UpdateData(self, tabsel):
 		if tabsel == 1:

@@ -23,12 +23,14 @@ class GLWidget(QtOpenGL.QGLWidget):
 		self.z_zoom = -3500
 		self.xTran = 0
 		self.yTran = 0
-
+		print("Loading stl files...")
 		self.model0 = loader('STLFile/Link0.STL')
 		self.model1 = loader('STLFile/Link1.STL')
 		self.model2 = loader('STLFile/Link2.STL')
 		self.model3 = loader('STLFile/Link3.STL')
 		self.model4 = loader('STLFile/Link4.STL')
+		self.model5 = loader('STLFile/tool.STL')
+		print("All done.")
 
 		self.listPoints = np.array([[0,0,0]])
 
@@ -128,19 +130,21 @@ class GLWidget(QtOpenGL.QGLWidget):
 		glTranslatef(self.objRobot.a[4], 0.0, 0.0)
 		glRotatef(RadToDeg(self.objRobot.alpha[4]), 1.0, 0.0, 0.0);
 		self.model4.draw()
+		self.setupColor([0.0/255, 180.0/255, 84.0/255])
+		self.model5.draw()
 		glPopMatrix()
 
 	def paintGL(self):
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 		glPushMatrix()
 		glTranslate(0, 0, self.z_zoom)
-		# glTranslate(self.xTran, self.yTran, 0)
+		glTranslate(self.xTran, self.yTran, 0)
 		glRotated(self.xRot / 16.0, 1.0, 0.0, 0.0)
 		glRotated(self.yRot / 16.0, 0.0, 1.0, 0.0)
 		glRotated(self.zRot / 16.0, 0.0, 0.0, 1.0)
 		glRotated(+90.0, 1.0, 0.0, 0.0)
 		self.drawGL()
-		self.DrawPoint([1.0, 0, 0], 3)
+		self.DrawPoint([255.0/255, 57.0/255, 0.0], 1)
 		glPopMatrix()
 
 	def DrawPoint(self, color, size):
@@ -170,7 +174,8 @@ class GLWidget(QtOpenGL.QGLWidget):
 
 	def drawGrid(self):
 		glPushMatrix()
-		color = [0.0, 1.0, 1.0]
+		# color = [255.0/255, 57.0/255, 0.0/255]
+		color = [8.0/255, 108.0/255, 162.0/255]
 		glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, color);
 		step = 50
 		num = 15
