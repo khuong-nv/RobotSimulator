@@ -35,8 +35,9 @@ class Robot(object):
 			else:
 				print("error while calculate")
 				
-	def CalInvPositionEx(self, EVars, q1p, q2p):
-		sol = self.inv.FindTheBestSolution(EVars, q1p, q2p)
+	def CalInvPositionEx(self, EVars, q1p=None, q2p=None, sol = -1):
+		if sol == -1:
+			sol = self.inv.FindTheBestSolution(EVars, q1p, q2p)
 		if sol != None:
 			result = self.inv.Cal_Inv_Position(EVars, sol)
 			if result[0] != False:

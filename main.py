@@ -14,10 +14,12 @@ import OpenGLControl as DrawRB
 from Robot import *
 from Trajectory import *
 
+
 class RobotSimulator(QMainWindow):
 
 	def __init__(self, *args):
 		super(RobotSimulator, self).__init__(*args)
+
 		loadUi('main.ui', self)
 		self.timer  = QTimer()
 		self.count = 0
@@ -31,6 +33,7 @@ class RobotSimulator(QMainWindow):
 		self.AllPoints = np.array([[None, None, None]])
 		self.AllJVars = np.array([[None, None, None, None]])
 		self.toolstatus = np.array([None])
+
 
 	def setupUI(self):	
 		self.setCentralWidget(self.RB)
@@ -99,9 +102,15 @@ class RobotSimulator(QMainWindow):
 		self.btnOpenFile.clicked.connect(self.openFileNameDialog)
 		self.btnLoadFile.clicked.connect(self.LoadFile)
 		self.btnRun.clicked.connect(self.Run)
+		# self.actionDock_Control_Panel.addAction(self.ViewGrid)
+		self.actionDock_Control_Panel.triggered.connect(self.ViewGrid)
 
 		self.btnUpdateStatusTab1.clicked.connect(lambda: self.UpdateData(1))
 		self.btnUpdateStatusTab2.clicked.connect(lambda: self.UpdateData(2))
+
+	def ViewGrid(self):
+		self.RB.isDrawGrid = not (self.RB.isDrawGrid)
+		self.RB.updateGL()
 
 	def valueChangeJVars(self, index, value):
 		self.objRB.JVars[index] = DegToRad(value)
@@ -129,6 +138,8 @@ class RobotSimulator(QMainWindow):
 		self.valueStatus.setText("None...")
 
 	def LoadFile(self):
+		self.count = 0
+		self.RB.listPoints = np.array([[0,0,0]])
 		self.AllPoints = np.array([[None, None, None]])
 		self.AllJVars = np.array([[None, None, None, None]])
 		self.toolstatus = np.array([None])
@@ -140,13 +151,14 @@ class RobotSimulator(QMainWindow):
 		listPoint = np.insert(listPoint, 0, [self.objRB.EVars[0], self.objRB.EVars[1], self.objRB.EVars[2], 0], axis = 0)
 		listPoint = np.append(listPoint, [[self.objRB.EVars[0], self.objRB.EVars[1], self.objRB.EVars[2], 0]], axis = 0)
 		toolstt_tmp = np.array([None])
+		trj.SetSpTime(0.1)
 		for i in np.arange(len(listPoint)-1):
 			p1 = listPoint[i][:3]
 			p2 = listPoint[i+1][:3]
 			if i==0 or i == len(listPoint)-2:
-				trj.SetPoint(p1,p2,10)
+				trj.SetPoint(p1,p2,100)
 			else:
-				trj.SetPoint(p1, p2)
+				trj.SetPoint(p1, p2, 50)
 			points = trj.Calculate()
 			if points[0] == False:
 				pass
@@ -170,7 +182,24 @@ class RobotSimulator(QMainWindow):
 			q1P = JVar[1]
 		
 		self.AllJVars = np.delete(self.AllJVars, 0, axis = 0)
+		# stt = np.array([0])
+		# count = 0
+		# flag = False
+		# self.RB.listPoints = self.AllPoints
+		# print(len(self.AllJVars))
+		# for i in self.toolstatus:
+		# 	if i == 1:
+		# 		count += 1
+		# 		flag = True
+		# 	else:
+		# 		if flag:
+		# 			stt = np.append(stt, count)
+		# 			count = 0
+		# 			flag = False
+		# self.RB.stt = stt
 		self.processLoadFile.setValue(100)
+		# print(np.sum(stt))
+
 		if len(self.AllJVars) == len(self.AllPoints):
 			self.valueStatus.setText("All done")
 		else:
@@ -178,13 +207,17 @@ class RobotSimulator(QMainWindow):
 
 
 	def Run(self):
-		self.timeEvent()
+		if len(self.AllJVars)> 1:
+			self.timeEvent()
+		else:
+			self.valueStatus.setText("Error: Data is empty.")
 
-	def timeEvent(self):	
+	def timeEvent(self):
 		try:
 			self.objRB.JVars = self.AllJVars[self.count]
 			if self.toolstatus[self.count] == 1:
 				self.RB.listPoints = np.append(self.RB.listPoints, [self.AllPoints[self.count]], axis = 0)
+			else:
 				pass
 			self.count +=1
 			self.RB.updateGL()

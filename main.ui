@@ -638,7 +638,7 @@
            <item row="6" column="0">
             <widget class="QPushButton" name="btnRun">
              <property name="text">
-              <string>Run</string>
+              <string>RunNow</string>
              </property>
             </widget>
            </item>
@@ -710,7 +710,7 @@
   </action>
   <action name="actionDock_Control_Panel">
    <property name="text">
-    <string>Dock Control Panel</string>
+    <string>View grid</string>
    </property>
   </action>
  </widget>

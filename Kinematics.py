@@ -119,5 +119,3 @@ class InvKinematics(Kinematics):
 		except Exception as e:
 			return False, 
 
-	def function():
-		pass

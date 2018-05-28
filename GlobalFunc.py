@@ -44,7 +44,7 @@ def LoadGCode(filename, offsetx, offsety, offsetz):
 	file_obj = open(filename, "r")
 	list_of_line = file_obj.readlines()
 	list_of_gcode = []
-	act = 0
+	act = int(0)
 	list_of_point = []
 	for ls in list_of_line:
 		if ("G1" in ls) or ("M300" in ls):
@@ -56,9 +56,9 @@ def LoadGCode(filename, offsetx, offsety, offsetz):
 		if "M300" in ls:
 			ls_split_space = ls.split(" ")
 			if ls_split_space[1] == "S30.00":
-				act = 1
+				act = int(1)
 			elif(ls_split_space[1] == "S50.00"):
-				act = 0
+				act = int(0)
 		if "G1" in ls:
 			ls_split_space = ls.split(" ")
 			x = offsetx + float(ls_split_space[1][1:])
