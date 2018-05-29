@@ -36,6 +36,7 @@ class GLWidget(QtOpenGL.QGLWidget):
 		self.listPoints = np.array([[0,0,0]])
 		self.AllList = np.array([self.listPoints])
 		self.stt = np.array([])
+		self.color=np.array([0])
 
 	def setXRotation(self, angle):
 		self.normalizeAngle(angle)
@@ -94,6 +95,7 @@ class GLWidget(QtOpenGL.QGLWidget):
 		glEnable(GL_LIGHT0)
 		glEnable(GL_DEPTH_TEST)
 		glEnable(GL_NORMALIZE)
+		# glEnable(GL_BLEND);
 		glClearColor(0.0, 0.0, 0.0, 1.0)
 
 	def drawGL(self):
@@ -153,15 +155,15 @@ class GLWidget(QtOpenGL.QGLWidget):
 
 	def DrawPoint(self, color, size):
 		glPushMatrix()
-		glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, color);
-		glPointSize(size);
-		glEnableClientState(GL_VERTEX_ARRAY);
-		glVertexPointer(3, GL_FLOAT, 0, self.listPoints);
-		glDrawArrays(GL_POINTS, 0, len(self.listPoints));
-# glDrawArrys(GL_LINE_STRIP, 250, 250);
-# glDrawArrays(GL_LINE_STRIP, 500, 250);
-# glDrawArrays(GL_LINE_STRIP, 750, 250);
-		glDisableClientState(GL_VERTEX_ARRAY);
+		glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, self.color);
+		glPointSize(size);		
+		for i in np.arange(len(self.listPoints)-1):
+			if self.color[i] == 1:
+				glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, [1.0, 1.0, 1.0]);
+				glBegin(GL_LINES);
+				glVertex3f(self.listPoints[i][0], self.listPoints[i][1], self.listPoints[i][2])
+				glVertex3f(self.listPoints[i+1][0], self.listPoints[i+1][1], self.listPoints[i+1][2])
+				glEnd()
 		glPopMatrix()
 
 	def resizeGL(self, width, height):
