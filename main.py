@@ -33,6 +33,7 @@ class RobotSimulator(QMainWindow):
 		self.AllPoints = np.array([[None, None, None]])
 		self.AllJVars = np.array([[None, None, None, None]])
 		self.toolstatus = np.array([None])
+		self.isRun = True
 
 
 	def setupUI(self):	
@@ -102,11 +103,27 @@ class RobotSimulator(QMainWindow):
 		self.btnOpenFile.clicked.connect(self.openFileNameDialog)
 		self.btnLoadFile.clicked.connect(self.LoadFile)
 		self.btnRun.clicked.connect(self.Run)
+		self.btnStop.clicked.connect(self.Stop)
+		# self.btnClear.clicked.connect(self.Clear)
 		# self.actionDock_Control_Panel.addAction(self.ViewGrid)
 		self.actionDock_Control_Panel.triggered.connect(self.ViewGrid)
-
+		self.actionAbout.triggered.connect(self.ShowAbout)
 		self.btnUpdateStatusTab1.clicked.connect(lambda: self.UpdateData(1))
 		self.btnUpdateStatusTab2.clicked.connect(lambda: self.UpdateData(2))
+
+	def ShowAbout(self):
+		msg = QMessageBox()
+		msg.setIcon(QMessageBox.Information)
+		msg.setText("Robot Simulator")
+		msg.setInformativeText("Project: Robot design\
+			\n\nCode by: Nguyen Van Khuong\
+			\nSource code: https://github.com/khuonghust/RobotSimulator\
+			\nVideo demo: https://tinyurl.com/robot-simulation-python-opengl")
+		msg.setWindowTitle("About Dialog")
+		msg.exec_()
+
+	def Stop(self):
+		self.isRun = False
 
 	def ViewGrid(self):
 		self.RB.isDrawGrid = not (self.RB.isDrawGrid)
@@ -138,6 +155,8 @@ class RobotSimulator(QMainWindow):
 		self.valueStatus.setText("None...")
 
 	def LoadFile(self):
+		self.UpdateData(1)
+		self.UpdateData(2)
 		if self.fileName == None:
 			self.valueStatus.setText("Error: file is not found")
 		else:
@@ -194,6 +213,7 @@ class RobotSimulator(QMainWindow):
 
 	def Run(self):
 		if len(self.AllJVars)> 1:
+			self.isRun = True
 			self.timeEvent()
 		else:
 			self.valueStatus.setText("Error: Data is empty.")
@@ -210,7 +230,7 @@ class RobotSimulator(QMainWindow):
 			self.count +=1
 			self.RB.updateGL()
 		finally:
-			if self.count < len(self.AllJVars) - 1:
+			if (self.count < len(self.AllJVars) - 1) and self.isRun:
 				QTimer.singleShot(0, self.timeEvent)
 			else:
 				self.valueStatus.setText("Done")

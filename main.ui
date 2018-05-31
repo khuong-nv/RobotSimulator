@@ -52,8 +52,9 @@
    </widget>
    <widget class="QMenu" name="menuAbout">
     <property name="title">
-     <string>About</string>
+     <string>Help</string>
     </property>
+    <addaction name="actionAbout"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuView"/>
@@ -559,6 +560,22 @@
          <string>Control</string>
         </attribute>
         <layout class="QGridLayout" name="gridLayout_3">
+         <item row="0" column="0">
+          <spacer name="verticalSpacer_6">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeType">
+            <enum>QSizePolicy::Preferred</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
          <item row="1" column="0">
           <layout class="QFormLayout" name="formLayout_2">
            <property name="fieldGrowthPolicy">
@@ -638,43 +655,18 @@
            <item row="6" column="0">
             <widget class="QPushButton" name="btnRun">
              <property name="text">
-              <string>RunNow</string>
+              <string>Run</string>
              </property>
             </widget>
            </item>
            <item row="6" column="1">
-            <spacer name="horizontalSpacer">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
+            <widget class="QPushButton" name="btnStop">
+             <property name="text">
+              <string>Stop</string>
              </property>
-             <property name="sizeType">
-              <enum>QSizePolicy::Preferred</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>0</height>
-              </size>
-             </property>
-            </spacer>
+            </widget>
            </item>
           </layout>
-         </item>
-         <item row="0" column="0">
-          <spacer name="verticalSpacer_6">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeType">
-            <enum>QSizePolicy::Preferred</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
          </item>
         </layout>
        </widget>
@@ -711,6 +703,11 @@
   <action name="actionDock_Control_Panel">
    <property name="text">
     <string>View grid</string>
+   </property>
+  </action>
+  <action name="actionAbout">
+   <property name="text">
+    <string>About</string>
    </property>
   </action>
  </widget>

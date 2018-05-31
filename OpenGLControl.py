@@ -18,7 +18,7 @@ class GLWidget(QtOpenGL.QGLWidget):
 		super(GLWidget, self).__init__(parent)
 		self.objRobot = objRobot
 		self.xRot = -2584
-		self.yRot = -512
+		self.yRot = 1376
 		self.zRot = 0.0
 		self.z_zoom = -3500
 		self.xTran = 0
@@ -145,9 +145,9 @@ class GLWidget(QtOpenGL.QGLWidget):
 		glPushMatrix()
 		glTranslate(0, 0, self.z_zoom)
 		glTranslate(self.xTran, self.yTran, 0)
-		glRotated(self.xRot / 16.0, 1.0, 0.0, 0.0)
-		glRotated(self.yRot / 16.0, 0.0, 1.0, 0.0)
-		glRotated(self.zRot / 16.0, 0.0, 0.0, 1.0)
+		glRotated(self.xRot/16.0, 1.0, 0.0, 0.0)
+		glRotated(self.yRot/16.0, 0.0, 1.0, 0.0)
+		glRotated(self.zRot/16.0, 0.0, 0.0, 1.0)
 		glRotated(+90.0, 1.0, 0.0, 0.0)
 		self.drawGL()
 		self.DrawPoint([255.0/255, 255.0/255, 255.0/255.0], 1.5)
